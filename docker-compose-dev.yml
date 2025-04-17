@@ -1,0 +1,10 @@
+services:
+  copertine-viewer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3200:3000"
+    environment:
+      - WEAVIATE_URL=http://localhost:8080
+      - PORT=3000

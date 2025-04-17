@@ -8,18 +8,23 @@ let instance: ConnectionStore | null = null;
 
 class ConnectionStore {
   private _url: string;
+  private _apiKey: string = '';
   private _connectionId: string = '';
   
-  private constructor(initialUrl: string) {
+  private constructor(initialUrl: string, initialApiKey: string = '') {
     this._url = initialUrl;
+    this._apiKey = initialApiKey;
   }
   
-  static getInstance(initialUrl?: string): ConnectionStore {
+  static getInstance(initialUrl?: string, initialApiKey?: string): ConnectionStore {
     if (!instance) {
       if (!initialUrl) {
         initialUrl = process.env.WEAVIATE_URL || '';
       }
-      instance = new ConnectionStore(initialUrl);
+      if (!initialApiKey) {
+        initialApiKey = process.env.WEAVIATE_API_KEY || '';
+      }
+      instance = new ConnectionStore(initialUrl, initialApiKey);
     }
     return instance;
   }
@@ -34,6 +39,14 @@ class ConnectionStore {
     // The singleton pattern ensures the URL is consistent across the application
   }
   
+  get apiKey(): string {
+    return this._apiKey;
+  }
+  
+  set apiKey(newApiKey: string) {
+    this._apiKey = newApiKey;
+  }
+  
   get connectionId(): string {
     return this._connectionId;
   }
@@ -43,8 +56,9 @@ class ConnectionStore {
   }
   
   // Reset the store (mainly for testing purposes)
-  reset(initialUrl?: string): void {
+  reset(initialUrl?: string, initialApiKey?: string): void {
     this._url = initialUrl || process.env.WEAVIATE_URL || '';
+    this._apiKey = initialApiKey || process.env.WEAVIATE_API_KEY || '';
     this._connectionId = '';
   }
   

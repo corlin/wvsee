@@ -61,6 +61,9 @@ export async function deleteObjects(className: string, objectIds: string[]): Pro
     try {
       const response = await fetch(`${connectionStore.url}/v1/objects/${id}`, {
         method: 'DELETE',
+        headers: {
+          ...(connectionStore.apiKey && { 'Authorization': `Bearer ${connectionStore.apiKey}` }),
+        },
       });
 
       if (!response.ok) {
@@ -80,6 +83,9 @@ export async function deleteCollection(className: string): Promise<void> {
   try {
     const response = await fetch(`${connectionStore.url}/v1/schema/${className}`, {
       method: 'DELETE',
+      headers: {
+        ...(connectionStore.apiKey && { 'Authorization': `Bearer ${connectionStore.apiKey}` }),
+      },
     });
 
     if (!response.ok) {
@@ -183,6 +189,7 @@ export async function executeQuery(queryStr: string): Promise<WeaviateResponse> 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(connectionStore.apiKey && { 'Authorization': `Bearer ${connectionStore.apiKey}` }),
       },
       body: JSON.stringify({ query: queryStr }),
     });
@@ -231,7 +238,11 @@ export async function getObjectsByClass(className: string): Promise<CollectionDa
 export async function getCollections(): Promise<CollectionInfo[]> {
   console.log(`Connected to Weaviate at: ${connectionStore.url}`);
   try {
-    const response = await fetch(`${connectionStore.url}/v1/schema`);
+    const response = await fetch(`${connectionStore.url}/v1/schema`, {
+      headers: {
+        ...(connectionStore.apiKey && { 'Authorization': `Bearer ${connectionStore.apiKey}` }),
+      },
+    });
     if (!response.ok) {
       console.error(`Failed to fetch schema. Status: ${response.status} ${response.statusText}`);
       throw new Error(`Failed to fetch schema: ${response.statusText}`);
@@ -279,6 +290,7 @@ async function executeAggregateQuery(queryStr: string, className: string): Promi
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(connectionStore.apiKey && { 'Authorization': `Bearer ${connectionStore.apiKey}` }),
       },
       body: JSON.stringify({ query: queryStr }),
     });
